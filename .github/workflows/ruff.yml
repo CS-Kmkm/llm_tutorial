@@ -1,0 +1,35 @@
+name: Ruff Code Formatting
+
+on: # トリガー条件を指定
+  pull_request: # プルリクエストに反応
+    types: [opened, synchronize] # プルリクエストがオープン、更新された場合にトリガー
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # プルリクエストの場合はPRのブランチをチェックアウトし、pushの場合は通常のブランチをチェックアウト
+          ref: ${{ (github.event_name == 'pull_request' && github.head_ref) || github.ref }}
+
+      - name: Run Ruff Linter and Fix
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: check --fix --select I
+
+      - name: Run Ruff Formatter
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: format .
+
+      - name: Auto Commit # 自動コミット
+        uses: stefanzweifel/git-auto-commit-action@v5 # 自動コミットアクションを使用
+        with:
+          commit_message: "Auto format code with Ruff" # コミットメッセージを指定
+          # commit_options: '--no-verify' # 必要に応じて追加。pre-commitフックをスキップする場合など
+          # file_pattern: '*.py' # 特定のファイルのみをコミットする場合。デフォルトは変更されたすべてのファイル
+          # push_options: '--force' # 強制プッシュが必要な場合 (通常は非推奨)
+          # skip_fetch: true # git fetchをスキップする場合
