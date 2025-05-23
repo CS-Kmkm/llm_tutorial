@@ -1,7 +1,8 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import sys
 import os
+import sys
+
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def visualize_vram(log_file_path):
