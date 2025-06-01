@@ -1,0 +1,56 @@
+name: Format Python Code with Ruff
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  ruff_format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }} # GitHubヘッドリファレンスを指定
+          # # 自動コミットのためにトークンを設定 (pushイベントで必要)
+          # # pull_requestイベントの場合は不要ですが、チェックアウトに必要です
+          # token: ${{ secrets.GITHUB_TOKEN }} 
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x' # 使用するPythonのバージョンを指定 (例: '3.10', '3.11', '3.x' for latest)
+          cache: 'pip' # pipキャッシュを有効にして依存関係のインストールを高速化
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff (Linter for import sorting and more)
+        # --select I でisort相当のimportソートを有効にします
+        # --fix で自動修正を適用します
+        run: ruff check --select I --fix .
+        # Ruffの出力形式をGitHub Actions向けに設定する場合は以下を使用
+        # run: ruff check --select I --fix --output-format=github .
+
+      - name: Run Ruff (Formatter)
+        # フォーマッターを実行し、isortとは別の整形を行います
+        run: ruff format .
+
+      - name: Check for changes and commit
+        id: git_check
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --exit-code; then
+            echo "::set-output name=has_changes::true"
+          else
+            echo "::set-output name=has_changes::false"
+          fi
+
+      - name: Auto commit formatted code
+        if: steps.git_check.outputs.has_changes == 'true'
+        run: |
+          git add .
+          git commit -m "Auto format code with Ruff"
+          git push
