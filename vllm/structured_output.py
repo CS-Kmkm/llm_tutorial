@@ -4,7 +4,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:8000/v1",
-    api_key="-",
+    api_key="token-abc123",
 )
 
 
@@ -24,7 +24,7 @@ class CarDescription(BaseModel):
 json_schema = CarDescription.model_json_schema()
 
 completion = client.chat.completions.create(
-    model="Qwen/Qwen2.5-3B-Instruct",
+    model="tokyotech-llm/Llama-3.1-Swallow-8B-Instruct-v0.3",
     messages=[
         {
             "role": "user",

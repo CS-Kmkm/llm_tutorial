@@ -1,3 +1,4 @@
+# enable_prefix_cachingを変更して、time python (ファイル名)で計測
 from transformers import AutoTokenizer
 
 from vllm import LLM, SamplingParams
@@ -9,17 +10,15 @@ llm = LLM(
     model=model_name,
     tensor_parallel_size=1,
     enable_prefix_caching=True,
+    max_num_batched_tokens = 4096
 )
 
-sampling_params = SamplingParams(temperature=0.6, top_p=0.9, max_tokens=512, stop="<|eot_id|>")
+sampling_params = SamplingParams(temperature=0.0, max_tokens=512, stop="<|eot_id|>")
 
 system_prompt = "あなたは誠実で優秀な日本人のアシスタントです。"
 user_prompts = [
     "歩き方について教えてください。",
-    "生きるコツを教えてください。",
-    "体力回復のための食事について教えてください。",
-    "無駄の省き方について教えてください。",
-]
+]*1000
 
 messages = [
     [
@@ -32,6 +31,6 @@ messages = [
 prompts = [tokenizer.apply_chat_template(message, tokenize=False, add_generation_prompt=True) for message in messages]
 output = llm.generate(prompts, sampling_params)
 
-for i, result in enumerate(output):
-    print(f"--- Prompt {i+1} ---")
-    print(result.outputs[0].text)
+# for i, result in enumerate(output):
+#     print(f"--- Prompt {i+1} ---")
+#     print(result.outputs[0].text)
