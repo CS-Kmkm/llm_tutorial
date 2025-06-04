@@ -30,7 +30,11 @@ messages = [
 ]
 
 prompts = [tokenizer.apply_chat_template(message, tokenize=False, add_generation_prompt=True) for message in messages]
-output = llm.generate(prompts, sampling_params)
+
+for prompt in prompts:
+    output = llm.generate(prompt, sampling_params)
+    # print(output[0].outputs[0].text)
+
 
 # for i, result in enumerate(output):
 #     print(f"--- Prompt {i + 1} ---")

@@ -8,8 +8,7 @@ LLMの推論高速化のためのライブラリ「vllm」についての情報�
 + vLLMの基本的な使い方
     + 1つのプロンプトを単純に推論
 + 少し応用的な使い方
-    + batch推論
-    + Prefix Caching
+    + OpenAI API互換のAPIとしての利用
     + Structured Output
 
 ## 本資料が対象としないもの
@@ -18,6 +17,8 @@ LLMの推論高速化のためのライブラリ「vllm」についての情報�
 + 一部環境へのインストール
     + CUDA11.8以前の環境
         + (本研究室のGPU４号機以前の環境)
++ OpenAI API互換APIとしての詳細な利用方法
+    + (別の方がしっかり紹介してくれるため)
 + その他上で記述していない実装
-    + OpenAI API互換のAPIとしての利用
     + Streaming output
+
